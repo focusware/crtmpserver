@@ -39,7 +39,7 @@ RTMPOutputChecks::RTMPOutputChecks(uint32_t maxStreamCount,
 	_channels = NULL;
 	_channels = new Channel[maxChannelsCount];
 	for (uint32_t i = 0; i < _maxChannelsCount; i++) {
-		memset(&_channels[i], 0, sizeof (Channel));
+		memset((void *)&_channels[i], 0, sizeof (Channel));
 		_channels[i].id = i;
 		_channels[i].lastOutStreamId = 0xffffffff;
 	}
