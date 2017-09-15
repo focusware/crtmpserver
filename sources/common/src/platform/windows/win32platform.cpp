@@ -337,7 +337,7 @@ bool setFdKeepAlive(SOCKET fd, bool isUdp) {
 	int value = 1;
 	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char *) &value, sizeof (int)) != 0) {
 		DWORD err = WSAGetLastError();
-		FATAL("setsockopt failed with error %"PRIu32, err);
+		FATAL("setsockopt failed with error %" PRIu32, err);
 		return false;
 	}
 	return true;
@@ -349,7 +349,7 @@ bool setFdNoNagle(SOCKET fd, bool isUdp) {
 	BOOL value = TRUE;
 	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *) &value, sizeof (BOOL)) == SOCKET_ERROR) {
 		DWORD err = WSAGetLastError();
-		FATAL("Unable to disable Nagle algorithm. Error was: %"PRIu32, err);
+		FATAL("Unable to disable Nagle algorithm. Error was: %" PRIu32, err);
 		return false;
 	}
 
@@ -416,7 +416,7 @@ bool DetermineMaxRcvSndBuff(int option, bool isUdp) {
 		//		assert(known <= testing);
 		//		assert(known <= prevTesting);
 		//		assert(testing <= prevTesting);
-		//		FINEST("%"PRId32" (%"PRId32") %"PRId32, known, testing, prevTesting);
+		//		FINEST("%" PRId32 " (%" PRId32 ") %" PRId32, known, testing, prevTesting);
 		if (testSetsockopt(option, testing)) {
 			known = testing;
 			testing = known + (prevTesting - known) / 2;
@@ -429,7 +429,7 @@ bool DetermineMaxRcvSndBuff(int option, bool isUdp) {
 	CLOSE_SOCKET(__maxSndBufSocket);
 	__maxSndBufSocket = (SOCKET) - 1;
 	maxVal = known;
-	//	FINEST("%s maxVal: %"PRId32, (option == SO_SNDBUF ? "SO_SNDBUF" : "SO_RCVBUF"), maxVal);
+	//	FINEST("%s maxVal: %" PRId32, (option == SO_SNDBUF ? "SO_SNDBUF" : "SO_RCVBUF"), maxVal);
 	return maxVal > 0;
 }
 
@@ -504,7 +504,7 @@ void killProcess(pid_t pid) {
 	HANDLE hSnap = ::CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if (hSnap == INVALID_HANDLE_VALUE) {
 		DWORD err = GetLastError();
-		FATAL("processes enumeration failed: %"PRIu32, err);
+		FATAL("processes enumeration failed: %" PRIu32, err);
 		return;
 	}
 
@@ -524,11 +524,11 @@ void killProcess(pid_t pid) {
 	//4. Kill the process
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, false, (DWORD) pid);
 	if (hProcess == NULL) {
-		FATAL("Cannot access process id = %"PRId32, pid);
+		FATAL("Cannot access process id = %" PRId32, pid);
 		return;
 	}
 	if (!TerminateProcess(hProcess, 0)) {
-		FATAL("Cannot terminate process id = %"PRId32, pid);
+		FATAL("Cannot terminate process id = %" PRId32, pid);
 	}
 	CloseHandle(hProcess);
 }
@@ -805,7 +805,7 @@ void GetFinishedProcesses(vector<pid_t> &pids, bool &noMorePids) {
 
 		if (resp == WAIT_FAILED) {
 			//ASSERT("Failed to get finished processes");
-			WARN("Failed to get process status. Err: %"PRIu32, GetLastError());
+			WARN("Failed to get process status. Err: %" PRIu32, GetLastError());
 			break;
 		} else {
 
@@ -915,7 +915,7 @@ bool LaunchProcess(string fullBinaryPath, vector<string> &arguments, vector<stri
 		}
 	}
 
-	//FINEST("blockSize: %"PRIu32, blockSize);
+	//FINEST("blockSize: %" PRIu32, blockSize);
 
 	// Create the process
 	STARTUPINFO si = {0};
@@ -927,7 +927,7 @@ bool LaunchProcess(string fullBinaryPath, vector<string> &arguments, vector<stri
 	//FINEST("pTemp: `%s`",pTemp);
 	if (!CreateProcess(NULL, pTemp, NULL, NULL, false, 0, envBlock, NULL, &si, &pi)) {
 		DWORD error = GetLastError();
-		FATAL("Unable to launch proces. Error: %"PRIu32, error);
+		FATAL("Unable to launch proces. Error: %" PRIu32, error);
 		delete[] pTemp;
 		if (envBlock != NULL)
 			delete envBlock;

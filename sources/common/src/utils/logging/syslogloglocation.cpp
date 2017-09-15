@@ -84,7 +84,7 @@ void SyslogLogLocation::Log(int32_t level, string fileName, uint32_t lineNumber,
 	int priority = (MAP_HAS1(_priorities, level) ? _priorities[level] : LOG_DEBUG) | LOG_USER;
 
 	if (_appendSourceFileLine) {
-		syslog(priority, "%s %s:%"PRIu32":%s %s",
+		syslog(priority, "%s %s:%" PRIu32 ":%s %s",
 				STR(le["loggerName"]),
 				STR(fileName),
 				lineNumber,

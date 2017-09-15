@@ -268,7 +268,7 @@ bool setFdTTL(SOCKET fd, uint8_t ttl) {
 	int temp = ttl;
 	if (setsockopt(fd, IPPROTO_IP, IP_TTL, &temp, sizeof (temp)) != 0) {
 		int err = errno;
-		WARN("Unable to set IP_TTL: %"PRIu8"; error was (%d) %s", ttl, err, strerror(err));
+		WARN("Unable to set IP_TTL: %" PRIu8 "; error was (%d) %s", ttl, err, strerror(err));
 	}
 	return true;
 }
@@ -277,7 +277,7 @@ bool setFdMulticastTTL(SOCKET fd, uint8_t ttl) {
 	int temp = ttl;
 	if (setsockopt(fd, IPPROTO_IP, IP_MULTICAST_TTL, &temp, sizeof (temp)) != 0) {
 		int err = errno;
-		WARN("Unable to set IP_MULTICAST_TTL: %"PRIu8"; error was (%d) %s", ttl, err, strerror(err));
+		WARN("Unable to set IP_MULTICAST_TTL: %" PRIu8 "; error was (%d) %s", ttl, err, strerror(err));
 	}
 	return true;
 }
@@ -286,7 +286,7 @@ bool setFdTOS(SOCKET fd, uint8_t tos) {
 	int temp = tos;
 	if (setsockopt(fd, IPPROTO_IP, IP_TOS, &temp, sizeof (temp)) != 0) {
 		int err = errno;
-		WARN("Unable to set IP_TOS: %"PRIu8"; error was (%d) %s", tos, err, strerror(err));
+		WARN("Unable to set IP_TOS: %" PRIu8 "; error was (%d) %s", tos, err, strerror(err));
 	}
 	return true;
 }
@@ -317,7 +317,7 @@ bool DetermineMaxRcvSndBuff(int option, bool isUdp) {
 		//		assert(known <= testing);
 		//		assert(known <= prevTesting);
 		//		assert(testing <= prevTesting);
-		//		FINEST("%"PRId32" (%"PRId32") %"PRId32, known, testing, prevTesting);
+		//		FINEST("%" PRId32 " (%" PRId32 ") %" PRId32, known, testing, prevTesting);
 		if (setsockopt(__maxSndBufSocket, SOL_SOCKET, option, (const char*) & testing,
 				sizeof (testing)) == 0) {
 			known = testing;
@@ -331,7 +331,7 @@ bool DetermineMaxRcvSndBuff(int option, bool isUdp) {
 	CLOSE_SOCKET(__maxSndBufSocket);
 	__maxSndBufSocket = -1;
 	maxVal = known;
-	//	FINEST("%s maxVal: %"PRId32, (option == SO_SNDBUF ? "SO_SNDBUF" : "SO_RCVBUF"), maxVal);
+	//	FINEST("%s maxVal: %" PRId32, (option == SO_SNDBUF ? "SO_SNDBUF" : "SO_RCVBUF"), maxVal);
 	return maxVal > 0;
 }
 

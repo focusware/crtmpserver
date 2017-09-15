@@ -760,7 +760,7 @@ bool BaseOutStream::ProcessH264FromTS(uint8_t *pBuffer, uint32_t length,
 	//6. make sure the packet doesn't grow too big
 	if (_genericProcessDataSetup._maxFrameSize != 0) {
 		if (GETAVAILABLEBYTESCOUNT(_videoFrame) >= _genericProcessDataSetup._maxFrameSize) {
-			WARN("Frame bigger than %"PRIu32" bytes. Discard it",
+			WARN("Frame bigger than %" PRIu32 " bytes. Discard it",
 					_genericProcessDataSetup._maxFrameSize);
 			_videoFrame.IgnoreAll();
 			_isKeyFrame = false;

@@ -332,7 +332,7 @@ string hex(const uint8_t *pBuffer, uint32_t length) {
 		return "";
 	string result = "";
 	for (uint32_t i = 0; i < length; i++) {
-		result += format("%02"PRIx8, pBuffer[i]);
+		result += format("%02" PRIx8, pBuffer[i]);
 	}
 	return result;
 }

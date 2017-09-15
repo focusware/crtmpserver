@@ -216,7 +216,7 @@ bool Initialize() {
 
 	INFO("%s", STR(Version::GetBanner()));
 
-	INFO("OS files descriptors count limits: %"PRIu32"/%"PRIu32,
+	INFO("OS files descriptors count limits: %" PRIu32 "/%" PRIu32,
 			currentFdCount, maxFdCount);
 
 	INFO("Initialize I/O handlers manager: %s", NETWORK_REACTOR);
@@ -274,7 +274,7 @@ void Run() {
 		exit(-1);
 	}
 	INFO("\n%s", STR(gRs.pConfigFile->GetServicesInfo()));
-	INFO("GO! GO! GO! (%"PRIu32")", (uint32_t) GetPid());
+	INFO("GO! GO! GO! (%" PRIu32 ")", (uint32_t) GetPid());
 	while (IOHandlerManager::Pulse()) {
 		IOHandlerManager::DeleteDeadHandlers();
 		ProtocolManager::CleanupDeadProtocols();
@@ -406,7 +406,7 @@ void WritePidFile(pid_t pid) {
 		return;
 	}
 
-	string content = format("%"PRIz"d", pid);
+	string content = format("%" PRIz "d", pid);
 	if (!f.WriteString(content)) {
 		WARN("Unable to write PID to file %s", STR(pidFile));
 		return;

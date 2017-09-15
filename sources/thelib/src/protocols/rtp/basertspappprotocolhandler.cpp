@@ -195,7 +195,7 @@ bool BaseRTSPAppProtocolHandler::PullExternalStream(URI uri, Variant streamConfi
 	//3. Connect
 	if (!TCPConnector<BaseRTSPAppProtocolHandler>::Connect(ip, port, chain,
 			customParameters)) {
-		FATAL("Unable to connect to %s:%"PRIu16, STR(ip), port);
+		FATAL("Unable to connect to %s:%" PRIu16, STR(ip), port);
 		return false;
 	}
 
@@ -286,7 +286,7 @@ bool BaseRTSPAppProtocolHandler::PushLocalStream(Variant streamConfig) {
 	//7. Connect
 	if (!TCPConnector<BaseRTSPAppProtocolHandler>::Connect(ip, port, chain,
 			customParameters)) {
-		FATAL("Unable to connect to %s:%"PRIu16, STR(ip), port);
+		FATAL("Unable to connect to %s:%" PRIu16, STR(ip), port);
 		return false;
 	}
 
@@ -684,7 +684,7 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPRequestSetupOutbound(RTSPProtocol *pF
 			forceTcp = true;
 			transport = temp;
 			uint16_t channel = (uint16_t) customParams["nextChannel"];
-			transport["interleaved"]["all"] = format("%"PRIu16"-%"PRIu16, channel, channel + 1);
+			transport["interleaved"]["all"] = format("%" PRIu16 "-%" PRIu16, channel, channel + 1);
 			transport["interleaved"]["data"] = (uint16_t) channel;
 			transport["interleaved"]["rtcp"] = (uint16_t) (channel + 1);
 			customParams["nextChannel"] = (uint16_t) (channel + 2);
@@ -1564,8 +1564,8 @@ bool BaseRTSPAppProtocolHandler::HandleRTSPResponse200Setup(
 			rangeEnd = -1;
 		}
 		string range = format("npt=%s-%s",
-				(rangeStart < 0) ? "now" : STR(format("%"PRId64, rangeStart)),
-				(rangeEnd < 0) ? "" : STR(format("%"PRId64, rangeEnd)));
+				(rangeStart < 0) ? "now" : STR(format("%" PRId64, rangeStart)),
+				(rangeEnd < 0) ? "" : STR(format("%" PRId64, rangeEnd)));
 
 		//3. prepare the play command
 		pFrom->PushRequestFirstLine(RTSP_METHOD_PLAY, uri, RTSP_VERSION_1_0);
@@ -1863,7 +1863,7 @@ void BaseRTSPAppProtocolHandler::ComputeRTPInfoHeader(RTSPProtocol *pFrom,
 				: (uint16_t) pOutboundConnectivity->GetLastVideoSequence();
 		if (rtpInfo != "")
 			rtpInfo += ",";
-		rtpInfo += format("url=%s;seq=%"PRIu16";rtptime=%"PRIu32,
+		rtpInfo += format("url=%s;seq=%" PRIu16 ";rtptime=%" PRIu32,
 				STR(MAP_VAL(i)["url"]),
 				sequence,
 				rtpTime
@@ -2096,7 +2096,7 @@ string BaseRTSPAppProtocolHandler::GetAudioTrack(RTSPProtocol *pFrom,
 		}
 		result += "m=audio 0 RTP/AVP 96\r\n";
 		result += "a=recvonly\r\n";
-		result += format("a=rtpmap:96 mpeg4-generic/%"PRIu32"/2\r\n",
+		result += format("a=rtpmap:96 mpeg4-generic/%" PRIu32 "/2\r\n",
 				pInfo->_samplingRate);
 		pFrom->GetCustomParameters()["rtpInfo"]["audio"]["frequency"] = (uint32_t) pInfo->_samplingRate;
 		//FINEST("result: %s", STR(result));
@@ -2127,7 +2127,7 @@ string BaseRTSPAppProtocolHandler::GetVideoTrack(RTSPProtocol *pFrom,
 		result += "a=recvonly\r\n";
 		result += "a=control:trackID="
 				+ (string) pFrom->GetCustomParameters()["videoTrackId"] + "\r\n";
-		result += format("a=rtpmap:97 H264/%"PRIu32"\r\n", pInfo->_samplingRate);
+		result += format("a=rtpmap:97 H264/%" PRIu32 "\r\n", pInfo->_samplingRate);
 		pFrom->GetCustomParameters()["rtpInfo"]["video"]["frequency"] = (uint32_t) pInfo->_samplingRate;
 		result += "a=fmtp:97 profile-level-id=";
 		result += hex(pInfo->_pSPS + 1, 3);
@@ -2290,7 +2290,7 @@ string BaseRTSPAppProtocolHandler::ComputeSDP(RTSPProtocol *pFrom,
 	//3. Prepare the body of the response
 	string result = "";
 	result += "v=0\r\n";
-	result += format("o=- %"PRIu32" 0 IN IP4 %s\r\n", pFrom->GetId(), STR(nearAddress));
+	result += format("o=- %" PRIu32 " 0 IN IP4 %s\r\n", pFrom->GetId(), STR(nearAddress));
 	result += "s=" + targetStreamName + "\r\n";
 	result += "u="BRANDING_WEB"\r\n";
 	result += "e="BRANDING_EMAIL"\r\n";
