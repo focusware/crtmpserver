@@ -50,6 +50,7 @@
 #include <sstream>
 #include <stdint.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <string>
 #include <sys/event.h>
 #include <sys/mman.h>
