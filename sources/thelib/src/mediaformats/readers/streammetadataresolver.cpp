@@ -247,7 +247,7 @@ bool StreamMetadataResolver::InitializeStorage(string name, Variant &config,
 		if (files[i].size()<(1 + minSize))
 			continue;
 		string fullFile = files[i];
-		if (fullFile.substr(fullFile.size() - minSize) == "."MEDIA_TYPE_STATS".tmp") {
+		if (fullFile.substr(fullFile.size() - minSize) == "." MEDIA_TYPE_STATS ".tmp") {
 			string statsFile = fullFile.substr(0, fullFile.size() - 4);
 			WARN("Moving opened stats file %s -> %s", STR(fullFile), STR(statsFile));
 			moveFile(fullFile, statsFile);

@@ -87,7 +87,7 @@ StreamMetadataResolver *BaseClientApplication::GetStreamMetadataResolver() {
 
 bool BaseClientApplication::Initialize() {
 	if (_configuration.HasKeyChain(V_STRING, false, 1, CONF_APPLICATION_MEDIAFOLDER)) {
-		WARN(CONF_APPLICATION_MEDIAFOLDER " is obsolete. Please use "CONF_APPLICATION_MEDIASTORAGE);
+		WARN(CONF_APPLICATION_MEDIAFOLDER " is obsolete. Please use " CONF_APPLICATION_MEDIASTORAGE);
 		if (!_configuration.HasKeyChain(V_MAP, false, 1, CONF_APPLICATION_MEDIASTORAGE)) {
 			_configuration[CONF_APPLICATION_MEDIASTORAGE] = Variant();
 			_configuration[CONF_APPLICATION_MEDIASTORAGE].IsArray(false);

@@ -351,13 +351,13 @@ bool BaseRTSPAppProtocolHandler::HandleHTTPRequest(RTSPProtocol *pFrom, Variant 
 		date = tempBuff;
 
 		string rawContent = (string) requestHeaders[RTSP_FIRST_LINE][RTSP_VERSION] + " 200 OK\r\n";
-		rawContent += RTSP_HEADERS_SERVER": "RTSP_HEADERS_SERVER_US"\r\n";
+		rawContent += RTSP_HEADERS_SERVER ": " RTSP_HEADERS_SERVER_US "\r\n";
 		rawContent += "Date: " + date + "\r\n";
 		rawContent += "Expires: " + date + "\r\n";
-		rawContent += HTTP_HEADERS_CONNECTION": "HTTP_HEADERS_CONNECTION_CLOSE"\r\n";
+		rawContent += HTTP_HEADERS_CONNECTION ": " HTTP_HEADERS_CONNECTION_CLOSE "\r\n";
 		rawContent += "Cache-Control: no-store\r\n";
 		rawContent += "Pragma: no-cache\r\n";
-		rawContent += HTTP_HEADERS_CONTENT_TYPE": application/x-rtsp-tunnelled\r\n\r\n";
+		rawContent += HTTP_HEADERS_CONTENT_TYPE ": application/x-rtsp-tunnelled\r\n\r\n";
 
 		if (!pFrom->SendRaw((uint8_t *) rawContent.data(), (uint32_t) rawContent.size(), false)) {
 			FATAL("Unable to send data");
@@ -2292,8 +2292,8 @@ string BaseRTSPAppProtocolHandler::ComputeSDP(RTSPProtocol *pFrom,
 	result += "v=0\r\n";
 	result += format("o=- %" PRIu32 " 0 IN IP4 %s\r\n", pFrom->GetId(), STR(nearAddress));
 	result += "s=" + targetStreamName + "\r\n";
-	result += "u="BRANDING_WEB"\r\n";
-	result += "e="BRANDING_EMAIL"\r\n";
+	result += "u=" BRANDING_WEB "\r\n";
+	result += "e=" BRANDING_EMAIL "\r\n";
 	result += "c=IN IP4 " + (isAnnounce ? farAddress : nearAddress) + "\r\n";
 	result += "t=0 0\r\n";
 	result += "a=recvonly\r\n";

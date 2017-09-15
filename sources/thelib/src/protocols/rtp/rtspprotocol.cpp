@@ -684,8 +684,8 @@ bool RTSPProtocol::SendMessage(string &firstLine, Variant &headers, string &cont
 		PassThroughProtocol *pProtocol =
 				(PassThroughProtocol *) ProtocolManager::GetProtocol(_passThroughProtocolId);
 		if (pProtocol == NULL) {
-			string headers = HTTP_METHOD_POST" " + _httpTunnelUri + " "HTTP_VERSION_1_0"\r\n";
-			headers += RTSP_HEADERS_X_POWERED_BY": "RTSP_HEADERS_X_POWERED_BY_US"\r\n";
+			string headers = HTTP_METHOD_POST " " + _httpTunnelUri + " " HTTP_VERSION_1_0 "\r\n";
+			headers += RTSP_HEADERS_X_POWERED_BY ": " RTSP_HEADERS_X_POWERED_BY_US "\r\n";
 			headers += "x-sessioncookie: " + _xSessionCookie + "\r\n";
 			headers += "Content-Type: application/x-rtsp-tunnelled\r\n";
 			headers += "Pragma: no-cache\r\n";
@@ -703,7 +703,7 @@ bool RTSPProtocol::SendMessage(string &firstLine, Variant &headers, string &cont
 					FATAL("Unable to create authentication header");
 					return false;
 				}
-				headers += HTTP_HEADERS_AUTORIZATION": " + (string) auth["temp"]["authorizationHeader"]["raw"] + "\r\n";
+				headers += HTTP_HEADERS_AUTORIZATION ": " + (string) auth["temp"]["authorizationHeader"]["raw"] + "\r\n";
 			}
 			headers += "Content-Length: 536870912\r\n\r\n";
 #ifdef RTSP_DUMP_TRAFFIC

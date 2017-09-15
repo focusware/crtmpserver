@@ -198,8 +198,8 @@ bool BaseInFileStream::Initialize(Metadata &metadata, TimerType timerType,
 	}
 	if (!_streamCapabilities.Deserialize(raw, this)) {
 		FATAL("Unable to deserialize stream Capabilities. Please delete %s and %s files so they can be regenerated",
-				STR(GetName() + "."MEDIA_TYPE_SEEK),
-				STR(GetName() + "."MEDIA_TYPE_META));
+				STR(GetName() + "." MEDIA_TYPE_SEEK),
+				STR(GetName() + "." MEDIA_TYPE_META));
 		return false;
 	}
 
