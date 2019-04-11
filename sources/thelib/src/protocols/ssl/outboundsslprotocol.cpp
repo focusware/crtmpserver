@@ -33,7 +33,13 @@ bool OutboundSSLProtocol::InitGlobalContext(Variant &parameters) {
 	_pGlobalSSLContext = _pGlobalContexts[hash];
 	if (_pGlobalSSLContext == NULL) {
 		//2. prepare the global ssl context
-		_pGlobalSSLContext = SSL_CTX_new(TLSv1_method());
+		const SSL_METHOD* method =
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+			TLSv1_2_client_method();
+#else
+			TLS_client_method();
+#endif
+		pGlobalSSLContext = SSL_CTX_new(method);
 		if (_pGlobalSSLContext == NULL) {
 			FATAL("Unable to create global SSL context");
 			return false;
