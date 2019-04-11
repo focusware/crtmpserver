@@ -405,7 +405,9 @@ string unhex(const uint8_t *pBuffer, uint32_t length) {
 
 void CleanupSSL() {
 #ifndef NO_SSL_ENGINE_CLEANUP
+	#if OPENSSL_VERSION_NUMBER < 0x10100000L
 	ERR_remove_state(0);
+	#endif
 	ENGINE_cleanup();
 	CONF_modules_unload(1);
 	ERR_free_strings();
