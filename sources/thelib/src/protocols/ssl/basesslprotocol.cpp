@@ -210,6 +210,7 @@ string BaseSSLProtocol::GetSSLErrors() {
 }
 
 string BaseSSLProtocol::DumpBIO(BIO *pBIO) {
+	/*
 	string formatString;
 	formatString = "method: %p\n";
 	formatString += "callback: %p\n";
@@ -240,6 +241,8 @@ string BaseSSLProtocol::DumpBIO(BIO *pBIO) {
 			pBIO->references,
 			(int64_t) pBIO->num_read,
 			(int64_t) pBIO->num_write);
+	*/
+	return "FIXME BaseSSLProtocol::DumpBIO";
 }
 
 void BaseSSLProtocol::InitRandGenerator() {

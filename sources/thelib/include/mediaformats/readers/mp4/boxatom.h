@@ -34,7 +34,7 @@ public:
 	virtual bool Read();
 	virtual string Hierarchy(uint32_t indent);
 
-	BaseAtom * GetPath(uint8_t depth, ...);
+	BaseAtom * GetPath(int depth, ...);
 	virtual BaseAtom * GetPath(vector<uint32_t> path);
 protected:
 	virtual bool AtomCreated(BaseAtom *pAtom) = 0;

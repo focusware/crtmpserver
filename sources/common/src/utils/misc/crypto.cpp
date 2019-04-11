@@ -46,35 +46,46 @@ bool DHWrapper::Initialize() {
 	}
 
 	//2. Create his internal p and g
-	_pDH->p = BN_new();
-	if (_pDH->p == NULL) {
+	BIGNUM *p = BN_new();
+	if (p == NULL) {
 		FATAL("Unable to create p");
 		Cleanup();
 		return false;
 	}
-	_pDH->g = BN_new();
-	if (_pDH->g == NULL) {
+	BIGNUM *g = BN_new();
+	if (g == NULL) {
 		FATAL("Unable to create g");
 		Cleanup();
 		return false;
 	}
 
 	//3. initialize p, g and key length
-	if (BN_hex2bn(&_pDH->p, P1024) == 0) {
+	if (BN_hex2bn(&p, P1024) == 0) {
 		FATAL("Unable to parse P1024");
 		Cleanup();
 		return false;
 	}
-	if (BN_set_word(_pDH->g, 2) != 1) {
+	if (BN_set_word(g, 2) != 1) {
 		FATAL("Unable to set g");
 		Cleanup();
 		return false;
 	}
 
-	//4. Set the key length
-	_pDH->length = _bitsCount;
+	//4. Set internal p and g
+	if (DH_set0_pqg(_pDH, p, NULL, g) != 1) {
+		FATAL("Unable to set internal p and g");
+		Cleanup();
+		return false;
+	}
 
-	//5. Generate private and public key
+	//5. Set the key length
+	if (DH_set_length(_pDH, _bitsCount) != 1) {
+		FATAL("Unable to set length");
+		Cleanup();
+		return false;
+	}
+
+	//6. Generate private and public key
 	if (DH_generate_key(_pDH) != 1) {
 		FATAL("Unable to generate DH public/private keys");
 		Cleanup();
@@ -90,7 +101,9 @@ bool DHWrapper::CopyPublicKey(uint8_t *pDst, int32_t dstLength) {
 		return false;
 	}
 
-	return CopyKey(_pDH->pub_key, pDst, dstLength);
+	const BIGNUM *pub_key;
+	DH_get0_key(_pDH, &pub_key, NULL);
+	return CopyKey(pub_key, pDst, dstLength);
 }
 
 bool DHWrapper::CopyPrivateKey(uint8_t *pDst, int32_t dstLength) {
@@ -99,7 +112,9 @@ bool DHWrapper::CopyPrivateKey(uint8_t *pDst, int32_t dstLength) {
 		return false;
 	}
 
-	return CopyKey(_pDH->priv_key, pDst, dstLength);
+	const BIGNUM *priv_key;
+	DH_get0_key(_pDH, NULL, &priv_key);
+	return CopyKey(priv_key, pDst, dstLength);
 }
 
 bool DHWrapper::CreateSharedKey(uint8_t *pPeerPublicKey, int32_t length) {
@@ -153,14 +168,6 @@ bool DHWrapper::CopySharedKey(uint8_t *pDst, int32_t dstLength) {
 
 void DHWrapper::Cleanup() {
 	if (_pDH != NULL) {
-		if (_pDH->p != NULL) {
-			BN_free(_pDH->p);
-			_pDH->p = NULL;
-		}
-		if (_pDH->g != NULL) {
-			BN_free(_pDH->g);
-			_pDH->g = NULL;
-		}
 		DH_free(_pDH);
 		_pDH = NULL;
 	}
@@ -177,7 +184,7 @@ void DHWrapper::Cleanup() {
 	}
 }
 
-bool DHWrapper::CopyKey(BIGNUM *pNum, uint8_t *pDst, int32_t dstLength) {
+bool DHWrapper::CopyKey(const BIGNUM *pNum, uint8_t *pDst, int32_t dstLength) {
 	int32_t keySize = BN_num_bytes(pNum);
 	if ((keySize <= 0) || (dstLength <= 0) || (keySize > dstLength)) {
 		FATAL("CopyPublicKey failed due to either invalid DH state or invalid call");
@@ -197,20 +204,19 @@ void InitRC4Encryption(uint8_t *secretKey, uint8_t *pubKeyIn, uint8_t *pubKeyOut
 	uint8_t digest[SHA256_DIGEST_LENGTH];
 	unsigned int digestLen = 0;
 
-	HMAC_CTX ctx;
-	HMAC_CTX_init(&ctx);
-	HMAC_Init_ex(&ctx, secretKey, 128, EVP_sha256(), 0);
-	HMAC_Update(&ctx, pubKeyIn, 128);
-	HMAC_Final(&ctx, digest, &digestLen);
-	HMAC_CTX_cleanup(&ctx);
+	HMAC_CTX *ctx;
+	ctx = HMAC_CTX_new();
+	HMAC_Init_ex(ctx, secretKey, 128, EVP_sha256(), 0);
+	HMAC_Update(ctx, pubKeyIn, 128);
+	HMAC_Final(ctx, digest, &digestLen);
 
 	RC4_set_key(rc4keyOut, 16, digest);
 
-	HMAC_CTX_init(&ctx);
-	HMAC_Init_ex(&ctx, secretKey, 128, EVP_sha256(), 0);
-	HMAC_Update(&ctx, pubKeyOut, 128);
-	HMAC_Final(&ctx, digest, &digestLen);
-	HMAC_CTX_cleanup(&ctx);
+	HMAC_CTX_reset(ctx);
+	HMAC_Init_ex(ctx, secretKey, 128, EVP_sha256(), 0);
+	HMAC_Update(ctx, pubKeyOut, 128);
+	HMAC_Final(ctx, digest, &digestLen);
+	HMAC_CTX_free(ctx);
 
 	RC4_set_key(rc4keyIn, 16, digest);
 }
@@ -220,14 +226,15 @@ string md5(string source, bool textResult) {
 }
 
 string md5(uint8_t *pBuffer, uint32_t length, bool textResult) {
-	EVP_MD_CTX mdctx;
+	EVP_MD_CTX *mdctx;
 	unsigned char md_value[EVP_MAX_MD_SIZE];
 	unsigned int md_len;
 
-	EVP_DigestInit(&mdctx, EVP_md5());
-	EVP_DigestUpdate(&mdctx, pBuffer, length);
-	EVP_DigestFinal_ex(&mdctx, md_value, &md_len);
-	EVP_MD_CTX_cleanup(&mdctx);
+	mdctx = EVP_MD_CTX_new();
+	EVP_DigestInit(mdctx, EVP_md5());
+	EVP_DigestUpdate(mdctx, pBuffer, length);
+	EVP_DigestFinal_ex(mdctx, md_value, &md_len);
+	EVP_MD_CTX_free(mdctx);
 
 	if (textResult) {
 		string result = "";
@@ -259,12 +266,12 @@ void HMACsha256(const void *pData, uint32_t dataLength,
 		const void *pKey, uint32_t keyLength, void *pResult) {
 	unsigned int digestLen;
 
-	HMAC_CTX ctx;
-	HMAC_CTX_init(&ctx);
-	HMAC_Init_ex(&ctx, (unsigned char*) pKey, keyLength, EVP_sha256(), NULL);
-	HMAC_Update(&ctx, (unsigned char *) pData, dataLength);
-	HMAC_Final(&ctx, (unsigned char *) pResult, &digestLen);
-	HMAC_CTX_cleanup(&ctx);
+	HMAC_CTX *ctx;
+	ctx = HMAC_CTX_new();
+	HMAC_Init_ex(ctx, (unsigned char*) pKey, keyLength, EVP_sha256(), NULL);
+	HMAC_Update(ctx, (unsigned char *) pData, dataLength);
+	HMAC_Final(ctx, (unsigned char *) pResult, &digestLen);
+	HMAC_CTX_free(ctx);
 
 	o_assert(digestLen == 32);
 }

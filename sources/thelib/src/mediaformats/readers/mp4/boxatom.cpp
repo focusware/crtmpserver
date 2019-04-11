@@ -64,7 +64,7 @@ string BoxAtom::Hierarchy(uint32_t indent) {
 	return result;
 }
 
-BaseAtom * BoxAtom::GetPath(uint8_t depth, ...) {
+BaseAtom * BoxAtom::GetPath(int depth, ...) {
 	vector<uint32_t> path;
 	va_list arguments;
 	va_start(arguments, depth);
