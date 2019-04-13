@@ -39,7 +39,7 @@ bool OutboundSSLProtocol::InitGlobalContext(Variant &parameters) {
 #else
 			TLS_client_method();
 #endif
-		pGlobalSSLContext = SSL_CTX_new(method);
+		_pGlobalSSLContext = SSL_CTX_new(method);
 		if (_pGlobalSSLContext == NULL) {
 			FATAL("Unable to create global SSL context");
 			return false;
